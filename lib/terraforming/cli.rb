@@ -1,10 +1,11 @@
 module Terraforming
   class CLI < Thor
     class_option :merge, type: :string, desc: "tfstate file to merge"
-    class_option :overwrite, type: :boolean, desc: "Overwrite existng tfstate"
+    class_option :overwrite, type: :boolean, desc: "Overwrite existing tfstate"
     class_option :tfstate, type: :boolean, desc: "Generate tfstate"
     class_option :profile, type: :string, desc: "AWS credentials profile"
     class_option :region, type: :string, desc: "AWS region"
+    class_option :assume, type: :string, desc: "Role ARN to assume"
     class_option :use_bundled_cert,
                  type: :boolean,
                  desc: "Use the bundled CA certificate from AWS SDK"
@@ -37,6 +38,11 @@ module Terraforming
     desc "dbsn", "Database Subnet Group"
     def dbsn
       execute(Terraforming::Resource::DBSubnetGroup, options)
+    end
+
+    desc "ddb", "DynamoDB"
+    def ddb
+      execute(Terraforming::Resource::DynamoDB, options)
     end
 
     desc "ec2", "EC2"
@@ -214,11 +220,28 @@ module Terraforming
       execute(Terraforming::Resource::VPNGateway, options)
     end
 
+    desc "snst", "SNS Topic"
+    def snst
+      execute(Terraforming::Resource::SNSTopic, options)
+    end
+
+    desc "snss", "SNS Subscription"
+    def snss
+      execute(Terraforming::Resource::SNSTopicSubscription, options)
+    end
+
     private
 
     def configure_aws(options)
       Aws.config[:credentials] = Aws::SharedCredentials.new(profile_name: options[:profile]) if options[:profile]
       Aws.config[:region] = options[:region] if options[:region]
+
+      if options[:assume]
+        args = { role_arn: options[:assume], role_session_name: "terraforming-session-#{Time.now.to_i}" }
+        args[:client] = Aws::STS::Client.new(profile: options[:profile]) if options[:profile]
+        Aws.config[:credentials] = Aws::AssumeRoleCredentials.new(args)
+      end
+
       Aws.use_bundled_cert! if options[:use_bundled_cert]
     end
 

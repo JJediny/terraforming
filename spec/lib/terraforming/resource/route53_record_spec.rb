@@ -66,7 +66,7 @@ module Terraforming
         ]
       end
 
-      let(:wildcard_resource_record_sets) do
+      let(:piyo_resource_record_sets) do
         [
           {
             name: '\052.example.net.',
@@ -77,7 +77,48 @@ module Terraforming
             resource_records: [
               { value: "example.com" }
             ]
-          }
+          },
+          {
+            name: "geo.example.net.",
+            type: "A",
+            ttl: 3600,
+            weight: nil,
+            set_identifier: nil,
+            geo_location: {
+              continent_code: "AS",
+              country_code: "JP",
+            },
+          },
+          {
+            name: "geo.example.net.",
+            type: "A",
+            ttl: 60,
+            weight: nil,
+            set_identifier: nil,
+          },
+          {
+            name: "failover.example.net.",
+            type: "A",
+            ttl: 3600,
+            weight: nil,
+            set_identifier: "failover_group",
+            health_check_id: "1234abcd-56ef-78gh-90ij-123456klmnop",
+            resource_records: [
+              { value: "192.0.2.101" }
+            ],
+            failover: "PRIMARY"
+          },
+          {
+            name: "failover.example.net.",
+            type: "A",
+            ttl: 3600,
+            weight: nil,
+            set_identifier: "failover_group",
+            resource_records: [
+              { value: "192.0.2.102" }
+            ],
+            failover: "SECONDARY"
+          },
         ]
       end
 
@@ -87,7 +128,7 @@ module Terraforming
         client.stub_responses(:list_resource_record_sets, [
           { resource_record_sets: hoge_resource_record_sets, is_truncated: false, max_items: 1 },
           { resource_record_sets: fuga_resource_record_sets, is_truncated: false, max_items: 1 },
-          { resource_record_sets: wildcard_resource_record_sets, is_truncated: false, max_items: 1 },
+          { resource_record_sets: piyo_resource_record_sets, is_truncated: false, max_items: 1 },
         ])
       end
 
@@ -119,12 +160,62 @@ resource "aws_route53_record" "www-fuga-net-A" {
     }
 }
 
-resource "aws_route53_record" "-052-example-net-CNAME" {
+resource "aws_route53_record" "wildcard-example-net-CNAME" {
     zone_id = "CDEFGHIJKLMNOP"
     name    = "*.example.net"
     type    = "CNAME"
     records = ["example.com"]
     ttl     = "3600"
+
+}
+
+resource "aws_route53_record" "geo-example-net-A-0" {
+    zone_id = "CDEFGHIJKLMNOP"
+    name    = "geo.example.net"
+    type    = "A"
+    ttl     = "3600"
+
+    geolocation_routing_policy {
+        continent = "AS"
+        country = "JP"
+    }
+
+}
+
+resource "aws_route53_record" "geo-example-net-A-1" {
+    zone_id = "CDEFGHIJKLMNOP"
+    name    = "geo.example.net"
+    type    = "A"
+    ttl     = "60"
+
+}
+
+resource "aws_route53_record" "failover-example-net-A-0" {
+    zone_id = "CDEFGHIJKLMNOP"
+    name    = "failover.example.net"
+    type    = "A"
+    records = ["192.0.2.101"]
+    ttl     = "3600"
+    set_identifier = "failover_group"
+    health_check_id = "1234abcd-56ef-78gh-90ij-123456klmnop"
+
+    failover_routing_policy {
+        type = "PRIMARY"
+    }
+
+}
+
+resource "aws_route53_record" "failover-example-net-A-1" {
+    zone_id = "CDEFGHIJKLMNOP"
+    name    = "failover.example.net"
+    type    = "A"
+    records = ["192.0.2.102"]
+    ttl     = "3600"
+    set_identifier = "failover_group"
+
+    failover_routing_policy {
+        type = "SECONDARY"
+    }
 
 }
 
@@ -165,7 +256,7 @@ resource "aws_route53_record" "-052-example-net-CNAME" {
                 },
               }
             },
-            "aws_route53_record.-052-example-net-CNAME" => {
+            "aws_route53_record.wildcard-example-net-CNAME" => {
               "type" => "aws_route53_record",
               "primary" => {
                 "id" => "CDEFGHIJKLMNOP_*.example.net_CNAME",
@@ -177,6 +268,73 @@ resource "aws_route53_record" "-052-example-net-CNAME" {
                   "records.#" => "1",
                   "ttl" => "3600",
                   "weight" => "-1",
+                },
+              }
+            },
+            "aws_route53_record.geo-example-net-A-0" => {
+              "type" => "aws_route53_record",
+              "primary" => {
+                "id" => "CDEFGHIJKLMNOP_geo.example.net_A",
+                "attributes" => {
+                  "id" => "CDEFGHIJKLMNOP_geo.example.net_A",
+                  "name" => "geo.example.net",
+                  "type" => "A",
+                  "zone_id" => "CDEFGHIJKLMNOP",
+                  "weight" => "-1",
+                  "ttl" => "3600",
+                  "continent" => "AS",
+                  "country" => "JP",
+                },
+              }
+            },
+            "aws_route53_record.geo-example-net-A-1" => {
+              "type" => "aws_route53_record",
+              "primary" => {
+                "id" => "CDEFGHIJKLMNOP_geo.example.net_A",
+                "attributes" => {
+                  "id" => "CDEFGHIJKLMNOP_geo.example.net_A",
+                  "name" => "geo.example.net",
+                  "type" => "A",
+                  "zone_id" => "CDEFGHIJKLMNOP",
+                  "weight" => "-1",
+                  "ttl" => "60",
+                },
+              }
+            },
+            "aws_route53_record.failover-example-net-A-0" => {
+              "type" => "aws_route53_record",
+              "primary" => {
+                "id" => "CDEFGHIJKLMNOP_failover.example.net_A",
+                "attributes" => {
+                  "failover_routing_policy.#" => "1",
+                  "failover_routing_policy.0.type" => "PRIMARY",
+                  "health_check_id" => "1234abcd-56ef-78gh-90ij-123456klmnop",
+                  "id" => "CDEFGHIJKLMNOP_failover.example.net_A",
+                  "name" => "failover.example.net",
+                  "type" => "A",
+                  "zone_id" => "CDEFGHIJKLMNOP",
+                  "records.#" => "1",
+                  "weight" => "-1",
+                  "ttl" => "3600",
+                  "set_identifier" => "failover_group",
+                },
+              }
+            },
+            "aws_route53_record.failover-example-net-A-1" => {
+              "type" => "aws_route53_record",
+              "primary" => {
+                "id" => "CDEFGHIJKLMNOP_failover.example.net_A",
+                "attributes" => {
+                  "failover_routing_policy.#" => "1",
+                  "failover_routing_policy.0.type" => "SECONDARY",
+                  "id" => "CDEFGHIJKLMNOP_failover.example.net_A",
+                  "name" => "failover.example.net",
+                  "type" => "A",
+                  "zone_id" => "CDEFGHIJKLMNOP",
+                  "records.#" => "1",
+                  "weight" => "-1",
+                  "ttl" => "3600",
+                  "set_identifier" => "failover_group",
                 },
               }
             },

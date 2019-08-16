@@ -26,10 +26,21 @@ module Terraforming
         end
       end
 
+      Aws.config[:sts] = {
+        stub_responses: {
+          get_caller_identity: {
+            account: '123456789012',
+            arn: 'arn:aws:iam::123456789012:user/terraforming',
+            user_id: 'AAAABBBBCCCCDDDDDEEE'
+          }
+        }
+      }
+
       before do
         allow(STDOUT).to receive(:puts).and_return(nil)
         allow(klass).to receive(:tf).and_return("")
         allow(klass).to receive(:tfstate).and_return({})
+        allow(klass).to receive(:assume).and_return({})
       end
 
       describe "asg" do
@@ -70,6 +81,13 @@ module Terraforming
       describe "dbsn" do
         let(:klass)   { Terraforming::Resource::DBSubnetGroup }
         let(:command) { :dbsn }
+
+        it_behaves_like "CLI examples"
+      end
+
+      describe "ddb" do
+        let(:klass)   { Terraforming::Resource::DynamoDB }
+        let(:command) { :ddb }
 
         it_behaves_like "CLI examples"
       end
@@ -318,6 +336,20 @@ module Terraforming
 
         it_behaves_like "CLI examples"
       end
+
+      describe "snst" do
+        let(:klass)   { Terraforming::Resource::SNSTopic }
+        let(:command) { :snst }
+
+        it_behaves_like "CLI examples"
+      end
+
+      describe "snss" do
+        let(:klass)   { Terraforming::Resource::SNSTopicSubscription }
+        let(:command) { :snss }
+
+        it_behaves_like "CLI examples"
+      end
     end
 
     context "flush to stdout" do
@@ -510,6 +542,39 @@ resource "aws_s3_bucket" "fuga" {
           after do
             @tmp_tfstate.close
             @tmp_tfstate.unlink
+          end
+        end
+
+        context "with --assumes and without --tfstate" do
+          it "should switch roles and export tf" do
+            expect(klass).to receive(:tf).with(no_args)
+            described_class.new.invoke(command, [], {
+              assume: 'arn:aws:iam::123456789123:role/test-role',
+              region: 'ap-northeast-1'
+            })
+          end
+        end
+
+        context "with --assumes and --tfstate" do
+          it "should switch roles and export tfstate" do
+            expect(klass).to receive(:tfstate).with(no_args)
+            described_class.new.invoke(command, [], {
+              assume: 'arn:aws:iam::123456789123:role/test-role',
+              region: 'ap-northeast-1',
+              tfstate: true
+            })
+          end
+        end
+
+        context "with --assumes and --tfstate --merge TFSTATE" do
+          it "should switch roles and export merged tfstate" do
+            expect(klass).to receive(:tfstate).with(no_args)
+            described_class.new.invoke(command, [], {
+              assume: 'arn:aws:iam::123456789123:role/test-role',
+              region: 'ap-northeast-1',
+              tfstate: true,
+              merge: tfstate_fixture_path
+            })
           end
         end
       end

@@ -19,13 +19,27 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "aws-sdk", "~> 2.7.0"
+  spec.add_dependency "aws-sdk-autoscaling", "~> 1"
+  spec.add_dependency "aws-sdk-cloudwatch", "~> 1"
+  spec.add_dependency "aws-sdk-dynamodb", "~> 1.18"
+  spec.add_dependency "aws-sdk-ec2", "~> 1"
+  spec.add_dependency "aws-sdk-efs", "~> 1", ">= 1.13.0"
+  spec.add_dependency "aws-sdk-elasticache", "~> 1"
+  spec.add_dependency "aws-sdk-elasticloadbalancing", "~> 1"
+  spec.add_dependency "aws-sdk-elasticloadbalancingv2", "~> 1"
+  spec.add_dependency "aws-sdk-iam", "~> 1"
+  spec.add_dependency "aws-sdk-kms", "~> 1"
+  spec.add_dependency "aws-sdk-rds", "~> 1"
+  spec.add_dependency "aws-sdk-redshift", "~> 1"
+  spec.add_dependency "aws-sdk-route53", "~> 1"
+  spec.add_dependency "aws-sdk-s3", "~> 1"
+  spec.add_dependency "aws-sdk-sns", "~> 1"
+  spec.add_dependency "aws-sdk-sqs", "~> 1"
   spec.add_dependency "multi_json", "~> 1.12.1"
   spec.add_dependency "thor"
 
-  spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "coveralls", "~> 0.8.13"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 3.2"
-  spec.add_development_dependency "simplecov", "~> 0.12.0"
+  spec.add_development_dependency "simplecov", "~> 0.14.1"
 end

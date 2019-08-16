@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/dtan4/terraforming.svg?branch=master)](https://travis-ci.org/dtan4/terraforming)
 [![Code Climate](https://codeclimate.com/github/dtan4/terraforming/badges/gpa.svg)](https://codeclimate.com/github/dtan4/terraforming)
 [![Coverage Status](https://coveralls.io/repos/github/dtan4/terraforming/badge.svg?branch=increase-test-cov-160528)](https://coveralls.io/github/dtan4/terraforming)
-[![Dependency Status](https://gemnasium.com/dtan4/terraforming.svg)](https://gemnasium.com/dtan4/terraforming)
 [![Gem Version](https://badge.fury.io/rb/terraforming.svg)](http://badge.fury.io/rb/terraforming)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![Docker Repository on Quay.io](https://quay.io/repository/dtan4/terraforming/status "Docker Repository on Quay.io")](https://quay.io/repository/dtan4/terraforming)
@@ -21,11 +20,14 @@ Export existing AWS resources to [Terraform](https://terraform.io/) style (tf, t
 - [Run as Docker container](#run-as-docker-container-)
 - [Development](#development)
 - [Contributing](#contributing)
+- [Similar projects](#similar-projects)
 - [License](#license)
 
 ## Supported version
 
-Ruby 2.1 or higher
+- Ruby 2.3 or higher is required
+- Terraform v0.9.3 or higher is recommended
+  - Some resources (e.g. `iam_instance_profile`) uses newer resource specification
 
 ## Installation
 
@@ -65,6 +67,12 @@ aws_secret_access_key = FugaFuga
 $ terraforming s3 --profile hoge
 ```
 
+You can assume a role by using the `--assume` option.
+
+```bash
+$ terraforming s3 --assume arn:aws:iam::123456789123:role/test-role
+```
+
 You can force the AWS SDK to utilize the CA certificate that is bundled with the SDK for systems where the default OpenSSL certificate is not installed (e.g. Windows) by utilizing the `--use-bundled-cert` option.
 
 ```bash
@@ -82,6 +90,7 @@ Commands:
   terraforming dbpg            # Database Parameter Group
   terraforming dbsg            # Database Security Group
   terraforming dbsn            # Database Subnet Group
+  terraforming ddb             # DynamoDB
   terraforming ec2             # EC2
   terraforming ecc             # ElastiCache Cluster
   terraforming ecsn            # ElastiCache Subnet Group
@@ -115,6 +124,8 @@ Commands:
   terraforming s3              # S3
   terraforming sg              # Security Group
   terraforming sn              # Subnet
+  terraforming snst            # SNS Topic
+  terraforming snss            # SNS Subscription
   terraforming sqs             # SQS
   terraforming vgw             # VPN Gateway
   terraforming vpc             # VPC
@@ -347,6 +358,10 @@ terraforming help | grep terraforming | grep -v help | awk '{print "terraforming
 find . -type f -name '*.tf' | xargs wc -l | grep ' 1 .'
 ```
 
+### Caveats
+
+- `terraforming kmsk` does not export EXTERNAL origin key, bacause Terraform does not support it.
+
 ## Run as Docker container [![Docker Repository on Quay.io](https://quay.io/repository/dtan4/terraforming/status "Docker Repository on Quay.io")](https://quay.io/repository/dtan4/terraforming)
 
 Terraforming Docker Image is available at [quay.io/dtan4/terraforming](https://quay.io/repository/dtan4/terraforming) and developed at [dtan4/dockerfile-terraforming](https://github.com/dtan4/dockerfile-terraforming).
@@ -385,6 +400,13 @@ Please read [Contribution Guide](CONTRIBUTING.md) at first.
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Similar projects
+
+There are some similar tools to import your existing infrastructure to Terraform configuration.
+
+- [GoogleCloudPlatform/terraformer](https://github.com/GoogleCloudPlatform/terraformer)
+- [cycloidio/terracognita](https://github.com/cycloidio/terracognita/)
 
 ## License
 

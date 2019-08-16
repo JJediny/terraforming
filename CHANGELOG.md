@@ -1,3 +1,71 @@
+# [v0.18.0](https://github.com/dtan4/terraforming/releases/tag/v0.18.0) (2019-05-11)
+
+## Resource
+
+- AWS DynamoDB table [#440](https://github.com/dtan4/terraforming/pull/440) (thanks @laxmiprasanna-gunna)
+
+## Fixed / Updated
+
+- Rename symbol of DynamoDB [#457](https://github.com/dtan4/terraforming/pull/457)
+- Add IPv6 support to AWS Security Group (`terraforming sg`) [#438](https://github.com/dtan4/terraforming/pull/438) (thanks @babbottscott)
+- Render notification_topic_arn when exporting ElastiCache clusters [#436](https://github.com/dtan4/terraforming/pull/436) (thanks @mozamimy)
+- Fix nil check of AWS IAM instance profiles (`terraforming iamip`) [#415](https://github.com/dtan4/terraforming/pull/415) (thanks @savankumargudaas)
+
+## Fixed / Updated
+
+- Support Ruby from 2.3 to 2.6
+- Support the latest EFS client [#453](https://github.com/dtan4/terraforming/pull/453)
+- Fix cross-account security group reference [#389](https://github.com/dtan4/terraforming/pull/389) (thanks @seren)
+
+# [v0.17.0](https://github.com/dtan4/terraforming/releases/tag/v0.17.0) (2019-04-21)
+
+## Fixed / Updated
+
+- Support Ruby from 2.3 to 2.6
+- Support the latest EFS client [#453](https://github.com/dtan4/terraforming/pull/453)
+- Fix cross-account security group reference [#389](https://github.com/dtan4/terraforming/pull/389) (thanks @seren)
+
+# [v0.16.0](https://github.com/dtan4/terraforming/releases/tag/v0.16.0) (2017-10-23)
+
+- Declare supported Terraform version: v0.9.3 or higher
+
+## New feature
+
+- Support assuming role `--assume` [#379](https://github.com/dtan4/terraforming/pull/379) (thanks @cmedley)
+
+## Fixed / Updated
+
+- Use ENCRYPT_DECRYPT as KMS key usage [#380](https://github.com/dtan4/terraforming/pull/380)
+- Fix IAM instance profile [#376](https://github.com/dtan4/terraforming/pull/376) (thanks @chroju)
+
+# [v0.15.0](https://github.com/dtan4/terraforming/releases/tag/v0.15.0) (2017-09-18)
+
+## Fixed / Updated
+
+- Upgrade to AWS SDK for Ruby V3 [#364](https://github.com/dtan4/terraforming/pull/364)
+- Ignore external key by `terraforming kmsk` (KMS key) [#363](https://github.com/dtan4/terraforming/pull/363)
+- Add failover attributes to Route53 record [#357](https://github.com/dtan4/terraforming/pull/357) (thanks @chroju)
+
+# [v0.14.0](https://github.com/dtan4/terraforming/releases/tag/v0.14.0) (2017-08-05)
+
+## Fixed / Updated
+
+- Drop Ruby 2.1 from CI [#351](https://github.com/dtan4/terraforming/pull/351)
+- Add `icmp_code` and `icmp_type` to NACL [#350](https://github.com/dtan4/terraforming/pull/350)
+- Use aws-sdk [#349](https://github.com/dtan4/terraforming/pull/349)
+- Rename title of aws_route53_record with wildcard [#348](https://github.com/dtan4/terraforming/pull/348) (thanks @furhouse)
+- SNS Support [#332](https://github.com/dtan4/terraforming/pull/332) (thanks @uberblah)
+  - `terraforming snst` (SNS Topic), `terraforming snss` (SNS Subscription)
+- Fix typo in cli.rb [#329](https://github.com/dtan4/terraforming/pull/329) (thanks @slalFe)
+
+# [v0.13.2](https://github.com/dtan4/terraforming/releases/tag/v0.13.2) (2017-04-20)
+
+## Fixed / Updated
+
+- Add prefix lists to security groups configuration [#326](https://github.com/dtan4/terraforming/pull/326) (thanks @julia-stripe)
+- Support Ruby 2.4 without warnings [#323](https://github.com/dtan4/terraforming/pull/323)
+- Fix support for EIP in EC2-Classic [#316](https://github.com/dtan4/terraforming/pull/316) (thanks @yn)
+
 # [v0.13.1](https://github.com/dtan4/terraforming/releases/tag/v0.13.1) (2017-01-23)
 
 ## Fixed / Updated
